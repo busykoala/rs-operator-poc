@@ -31,8 +31,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         let client= get_client();
         let deployments: Api<Deployment> = Api::namespaced(client, &env.namespace);
-        let pg_depl = deployments.get(&env.deployment).await?;
-        println!("{:?}", pg_depl.spec.unwrap());
+        let depl_info = deployments.get(&env.deployment).await?;
+        println!("{:?}", depl_info.spec.unwrap());
         sleep(Duration::from_secs(5));
     }
 }
