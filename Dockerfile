@@ -8,8 +8,8 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 
 FROM debian:bullseye
 WORKDIR /app
-RUN groupadd peter && useradd -g peter peter
+RUN groupadd rusty && useradd -g rusty rusty
 COPY --from=builder /usr/local/cargo/bin/operator /app/operator
-RUN chown -R peter:peter /app
-USER peter
+RUN chown -R rusty:rusty /app
+USER rusty
 CMD ["/app/operator"]
