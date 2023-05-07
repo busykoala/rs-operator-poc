@@ -1,44 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-deployment
-  namespace: peter
+  name: poc-operator-depl
+  namespace: poc-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: poc-operator-app
   template:
     metadata:
       labels:
-        app: my-app
+        app: poc-operator-app
     spec:
-      serviceAccountName: my-service-account
+      serviceAccountName: operator-sa
       containers:
-        - name: my-container
-          image: peter:latest
+        - name: poc-operator-container
+          image: poc-operator:latest
           imagePullPolicy: Never
           env:
             - name: DEPLOYMENT
-              value: "pg-depl"
+              value: "hello-depl"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pg-depl
-  namespace: peter
+  name: hello-depl
+  namespace: poc-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dummy-app
+      app: hello-app
   template:
     metadata:
       labels:
-        app: dummy-app
+        app: hello-app
     spec:
       containers:
-        - name: dummy-container
+        - name: hello-container
           image: alpine:latest
           command: ["/bin/sh", "-c"]
           args: ["while true; do echo 'Hello, world!'; sleep 10; done"]
@@ -46,14 +46,14 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: my-service-account
-  namespace: peter
+  name: operator-sa
+  namespace: poc-operator
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: my-role
-  namespace: peter
+  name: operator-role
+  namespace: poc-operator
 rules:
   - apiGroups: ["apps"]
     resources: ["deployments"]
@@ -62,13 +62,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: my-role-binding
-  namespace: peter
+  name: operator-role-binding
+  namespace: poc-operator
 subjects:
   - kind: ServiceAccount
-    name: my-service-account
-    namespace: peter
+    name: operator-sa
+    namespace: poc-operator
 roleRef:
   kind: Role
-  name: my-role
+  name: operator-role
   apiGroup: rbac.authorization.k8s.io

@@ -12,7 +12,8 @@ minikube start
 # put minikube docker context into scope
 eval $(minikube docker-env)
 # build image (in minikube context)
-docker build -t peter .
+docker build -t poc-operator .
 # apply the resources
+kubectl create ns poc-operator
 kubectl apply -f setup.yaml
 ```
