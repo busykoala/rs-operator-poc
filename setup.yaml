@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  namespace: peter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      serviceAccountName: my-service-account
+      containers:
+        - name: my-container
+          image: peter:latest
+          imagePullPolicy: Never
+          env:
+            - name: DEPLOYMENT
+              value: "pg-depl"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-depl
+  namespace: peter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dummy-app
+  template:
+    metadata:
+      labels:
+        app: dummy-app
+    spec:
+      containers:
+        - name: dummy-container
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args: ["while true; do echo 'Hello, world!'; sleep 10; done"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-service-account
+  namespace: peter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: my-role
+  namespace: peter
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-role-binding
+  namespace: peter
+subjects:
+  - kind: ServiceAccount
+    name: my-service-account
+    namespace: peter
+roleRef:
+  kind: Role
+  name: my-role
+  apiGroup: rbac.authorization.k8s.io
