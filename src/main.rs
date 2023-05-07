@@ -3,12 +3,10 @@ use k8s_openapi::api::apps::v1::Deployment;
 use kube::{Api, Client, config::Config};
 use std::{fs, env, time::Duration};
 
-
 struct Env {
     namespace: String,
     deployment: String,
 }
-
 
 fn get_environment() -> Env {
     let file_path = "/var/run/secrets/kubernetes.io/serviceaccount/namespace";
@@ -21,13 +19,11 @@ fn get_environment() -> Env {
     }
 }
 
-
 fn get_client() -> Client {
     let config = Config::incluster_env().unwrap();
     let client = Client::try_from(config).unwrap();
     return client
 }
-
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
