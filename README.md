@@ -1,4 +1,4 @@
-# Dummy rust 'operator'
+# Dummy :crab: 'operator'
 
 This is a quick and dirty rust experiment to learn about how to use the k8s api
 using rust from within a namespace using the service account token in the
