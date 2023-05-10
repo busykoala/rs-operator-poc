@@ -1,5 +1,3 @@
-use k8s_openapi::api::apps::v1::Deployment;
-use kube::Api;
 use std::time::Duration;
 
 mod k8s;
@@ -8,11 +6,9 @@ mod config;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let env = config::get_environment();
-    let client = k8s::get_client();
-    let deployments: Api<Deployment> = Api::namespaced(client, &env.namespace);
-
+    let apis = k8s::get_apis();
     loop {
-        match deployments.get(&env.deployment).await {
+        match apis.deployment.get(&env.deployment).await {
             Ok(depl_info) => {
                 if let Some(spec) = depl_info.spec {
                     println!("{:?}", spec);
